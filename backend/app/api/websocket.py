@@ -1,8 +1,9 @@
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from typing import Dict
 import redis.asyncio as redis
 import json
-import asyncio
+
+router = APIRouter()
 
 class ConnectionManager:
     def __init__(self):
@@ -22,7 +23,9 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+@router.websocket("/ws/agents/{agent_id}")
 async def websocket_endpoint(websocket: WebSocket, agent_id: str):
+    """WebSocket endpoint for real-time agent updates"""
     await manager.connect(agent_id, websocket)
     
     # Subscribe to Redis pub/sub for this agent
@@ -36,6 +39,11 @@ async def websocket_endpoint(websocket: WebSocket, agent_id: str):
                 data = json.loads(message['data'])
                 await websocket.send_json(data)
     except WebSocketDisconnect:
+        manager.disconnect(agent_id)
+        await pubsub.unsubscribe(f'agent:{agent_id}')
+        await redis_client.close()
+    except Exception as e:
+        print(f"WebSocket error: {e}")
         manager.disconnect(agent_id)
         await pubsub.unsubscribe(f'agent:{agent_id}')
         await redis_client.close()

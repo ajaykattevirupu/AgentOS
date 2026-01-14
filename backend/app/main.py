@@ -1,6 +1,6 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import agents
+from app.api import agents, websocket
 from app.core.database import engine
 from app.models.agent import Base
 
@@ -20,6 +20,7 @@ app.add_middleware(
 
 # Routes
 app.include_router(agents.router, prefix="/api/agents", tags=["agents"])
+app.include_router(websocket.router, tags=["websocket"])
 
 @app.get("/")
 def root():
