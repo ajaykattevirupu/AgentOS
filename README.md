@@ -17,10 +17,9 @@ Agents you start and forget. No babysitting required.
 - Infrastructure: Docker
 
 ## Team
-- [Name] - Agent Orchestration
-- [Name] - Monitoring & Intelligence
-- [Name] - API & Infrastructure
-- [Name] - Frontend & UX
+- Agent Orchestration
+- Monitoring & Intelligence
+- API & Infrastructu Frontend & UX
 
 ## Getting Started
 ```bash
